@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_states/models/usuario.dart';
+import 'package:flutter_states/services/usuario_service.dart';
 
 class PrimaryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("Primary")),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.accessibility_new),
-        onPressed: () => Navigator.pushNamed(context, 'secondary'),
-      ),
-      body: InformacionUsuario(),
-    );
+        appBar: AppBar(centerTitle: true, title: Text("Primary")),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.accessibility_new),
+          onPressed: () => Navigator.pushNamed(context, 'secondary'),
+        ),
+        body: StreamBuilder(
+            stream: usuarioService.usuarioStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return snapshot.hasData
+                  ? InformacionUsuario(
+                      usuario: usuarioService.usuario,
+                    )
+                  : Center(
+                      child: Text("No hay información del usuario"),
+                    );
+            }));
   }
 }
 
 class InformacionUsuario extends StatelessWidget {
+  final Usuario usuario;
+
+  const InformacionUsuario({Key key, this.usuario}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,10 +41,10 @@ class InformacionUsuario extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         Divider(),
         ListTile(
-          title: Text('Nombre: '),
+          title: Text('Nombre: ${usuario.nombre} '),
         ),
         ListTile(
-          title: Text('Edad: '),
+          title: Text('Edad: ${usuario.edad}'),
         ),
         Text('Profesiones',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),

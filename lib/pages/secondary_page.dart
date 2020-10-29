@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_states/bloc/usuario/usuario_bloc.dart';
+import 'package:flutter_states/models/usuario.dart';
 
 class SecondaryPage extends StatelessWidget {
   @override
@@ -13,7 +16,14 @@ class SecondaryPage extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
             color: Colors.blue,
-            onPressed: () {}),
+            onPressed: () {
+              final newUser = new Usuario(
+                  nombre: 'Jose',
+                  edad: 34,
+                  profesiones: ['FullStack Developer']);
+              BlocProvider.of<UsuarioBloc>(context)
+                  .add(ActivarUsuario(newUser));
+            }),
         MaterialButton(
             child: Text(
               "Cambiar Edad",

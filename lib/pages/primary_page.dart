@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_states/bloc/usuario/usuario_bloc.dart';
+import 'package:flutter_states/models/usuario.dart';
 
 class PrimaryPage extends StatelessWidget {
   @override
@@ -9,12 +12,26 @@ class PrimaryPage extends StatelessWidget {
         child: Icon(Icons.accessibility_new),
         onPressed: () => Navigator.pushNamed(context, 'secondary'),
       ),
-      body: InformacionUsuario(),
+      body: BlocBuilder<UsuarioBloc, UsuarioState>(
+        builder: (context, state) {
+          if (state.existeUsuario) {
+            return InformacionUsuario(usuario: state.usuario);
+          } else {
+            return Center(
+              child: Text("No hay usuario seleccionado"),
+            );
+          }
+        },
+      ),
     );
   }
 }
 
 class InformacionUsuario extends StatelessWidget {
+  final Usuario usuario;
+
+  const InformacionUsuario({Key key, this.usuario}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,23 +43,21 @@ class InformacionUsuario extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         Divider(),
         ListTile(
-          title: Text('Nombre: '),
+          title: Text('Nombre: ${usuario.nombre}'),
         ),
         ListTile(
-          title: Text('Edad: '),
+          title: Text('Edad: ${usuario.edad}'),
         ),
         Text('Profesiones',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         Divider(),
-        ListTile(
-          title: Text('Profesion 1: '),
-        ),
-        ListTile(
-          title: Text('Profesion 1: '),
-        ),
-        ListTile(
-          title: Text('Profesion 1: '),
-        ),
+        ...usuario.profesiones
+            .map(
+              (profesion) => ListTile(
+                title: Text(profesion),
+              ),
+            )
+            .toList()
       ]),
     );
   }
